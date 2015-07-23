@@ -1,7 +1,7 @@
 services:
   gointegro.endpoint.content.delivery:
       class: GoIntegro\Bundle\EndPointBundle\Application\Content\Delivery
-      arguments: [@gointegro.endpoint.content.formatter, @gointegro.endpoint.factory]
+      arguments: [@gointegro.endpoint.content.formatter]
 
   gointegro.endpoint.content.formatter:
       class: GoIntegro\Bundle\EndPointBundle\Infrastructure\Application\Content\ApiFormatter

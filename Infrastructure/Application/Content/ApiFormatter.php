@@ -49,6 +49,25 @@ class ApiFormatter implements Formatter
     }
 
     /**
+     * return the included data formatted
+     *
+     * @param Data[] $linkedData
+     * @return array
+     */
+    private function getFormattedIncludedData(array $linkedData)
+    {
+        $return = [];
+        foreach ($linkedData as $linked) {
+            if (!isset($return[$linked->getType()])) {
+                $return[$linked->getType()] = [];
+            }
+            $return[$linked->getType()][] = $linked->toArray();
+        }
+
+        return $return;
+    }
+
+    /**
      * return the related entity formatted
      *
      * @param ApiEntity $entity
@@ -116,24 +135,5 @@ class ApiFormatter implements Formatter
         );
 
         return strtolower($entity . '/' . $class);
-    }
-
-    /**
-     * return the included data formatted
-     *
-     * @param array $linkedData
-     * @return array
-     */
-    private function getFormattedIncludedData(array $linkedData)
-    {
-        $return = [];
-        foreach ($linkedData as $linked) {
-            if (!isset($return[$linked->getType()])) {
-                $return[$linked->getType()] = [];
-            }
-            $return[$linked->getType()][] = $linked->toArray();
-        }
-
-        return $return;
     }
 }

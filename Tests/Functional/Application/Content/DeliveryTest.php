@@ -15,11 +15,6 @@ class DeliveryTest extends \PHPUnit_Framework_TestCase
     private $formatter;
 
     /**
-     * @var \Mockery\MockInterface
-     */
-    private $factory;
-
-    /**
      * @var Delivery
      */
     private $sut;
@@ -27,17 +22,14 @@ class DeliveryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
         $this->formatter = \Mockery::mock('GoIntegro\Bundle\EndPointBundle\Application\Content\Formatter');
-        $this->factory = \Mockery::mock('GoIntegro\Bundle\EndPointBundle\Application\Factory\EntityFactory');
-
-        $this->sut = new Delivery($this->formatter, $this->factory);
+        $this->sut = new Delivery($this->formatter);
     }
 
     public function tearDown()
     {
         $this->formatter = null;
-        $this->factory = null;
+        $this->sut = null;
         parent::tearDown();
     }
 
@@ -49,14 +41,14 @@ class DeliveryTest extends \PHPUnit_Framework_TestCase
         // arrange
         $apiRequest = new HttpRequest(new Request());
         $apiEntity = \Mockery::mock('GoIntegro\Bundle\EndPointBundle\Application\Model\ApiEntity');
-        $contentDelivery = new Data(['id' => 1, 'type' => 'environment']);
+        $content = new Data(['id' => 1, 'type' => 'environment']);
 
         // assert
         $apiEntity->shouldReceive('getResourceType')->once()->andReturn('environments');
         $this->formatter->shouldReceive('getFormattedEntityData')
                         ->with($apiEntity, [], [])
-                        ->andReturn($contentDelivery);
-        $this->formatter->shouldReceive('response')->once()->with($contentDelivery, []);
+                        ->andReturn($content);
+        $this->formatter->shouldReceive('response')->once()->with($content, []);
 
         // act
         $this->sut->generate($apiRequest, $apiEntity);
@@ -72,23 +64,17 @@ class DeliveryTest extends \PHPUnit_Framework_TestCase
         $apiRequest = new HttpRequest(new Request(['include' => ['platform']]));
 
         $apiEntity = \Mockery::mock('GoIntegro\Bundle\EndPointBundle\Application\Model\ApiEntity');
-        $contentEnvironment = new Data(['id' => 1, 'type' => 'environment']);
-
-        $entityPlatform = \Mockery::mock('GoIntegro\Interfaces\Rest\Resource');
-        $contentPlatform = new Data(['id' => 2, 'type' => 'platform']);
         $apiEntityPlatform = \Mockery::mock('GoIntegro\Bundle\EndPointBundle\Application\Model\ApiEntity');
+        $contentEnvironment = new Data(['id' => 1, 'type' => 'environment']);
+        $contentPlatform = new Data(['id' => 2, 'type' => 'platform']);
 
         // assert
         $apiEntity->shouldReceive('getResourceType')->once()->andReturn('environments');
-        if ($includes == 1) {
-            $apiEntity->shouldReceive('platform')->once()->andReturn([$entityPlatform]);
-            $this->factory->shouldReceive('get')->with([$entityPlatform])->andReturn([$apiEntityPlatform]);
-        } else {
-            $apiEntity->shouldReceive('platform')->once()->andReturn($entityPlatform);
-            $this->factory->shouldReceive('get')->with($entityPlatform)->andReturn([$apiEntityPlatform]);
-        }
-
-
+        $apiEntity->shouldReceive('platform')->once()->andReturn(
+            ($includes == 1)
+                ? $apiEntityPlatform
+                : [$apiEntityPlatform]
+        );
         $apiEntityPlatform->shouldReceive('getResourceType')->once()->andReturn('platforms');
 
         $this->formatter->shouldReceive('getFormattedEntityData')

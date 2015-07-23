@@ -18,18 +18,11 @@ class Delivery
     private $contentFormatter;
 
     /**
-     * @var EntityFactory
-     */
-    private $entityFactory;
-
-    /**
      * @param Formatter $contentFormatter
-     * @param EntityFactory $entityFactory
      */
-    public function __construct(Formatter $contentFormatter, EntityFactory $entityFactory)
+    public function __construct(Formatter $contentFormatter)
     {
         $this->contentFormatter = $contentFormatter;
-        $this->entityFactory = $entityFactory;
     }
 
     /**
@@ -64,19 +57,6 @@ class Delivery
     }
 
     /**
-     * call the content formatter to get the entity data
-     *
-     * @param ApiEntity $apiEntity
-     * @param $filter
-     * @param $include
-     * @return Data
-     */
-    private function getFormattedEntityData(ApiEntity $apiEntity, $filter, $include)
-    {
-        return $this->contentFormatter->getFormattedEntityData($apiEntity, $filter, $include);
-    }
-
-    /**
      * return an array of related entities
      *
      * @param ApiRequest $apiRequest
@@ -103,6 +83,8 @@ class Delivery
     }
 
     /**
+     * formatted each entity include in the request
+     *
      * @param ApiRequest $apiRequest
      * @param ApiEntity $apiEntity
      * @param $entityToInclude
@@ -115,25 +97,33 @@ class Delivery
         $entityToInclude,
         array $result
     ) {
-        $entities = $this->getIncludedEntities($apiEntity, $entityToInclude);
+        $entities = $apiEntity->{$entityToInclude}();
+        if (!is_array($entities)) {
+            $entities = [$entities];
+        }
+
         foreach ($entities as $entity) {
             $type = $entity->getResourceType();
-            $result[] = $this->getFormattedEntityData($entity, $apiRequest->getFilter($type), $apiRequest->getIncludes($entityToInclude));
+            $result[] = $this->getFormattedEntityData(
+                $entity,
+                $apiRequest->getFilter($type),
+                $apiRequest->getIncludes($entityToInclude)
+            );
         }
 
         return $result;
     }
 
     /**
-     * @param ApiEntity $entity
-     * @param $included
+     * call the content formatter to get the entity data
      *
-     * @return ApiEntity[]
+     * @param ApiEntity $apiEntity
+     * @param $filter
+     * @param $include
+     * @return Data
      */
-    private function getIncludedEntities(ApiEntity $entity, $included)
+    private function getFormattedEntityData(ApiEntity $apiEntity, $filter, $include)
     {
-        $content = $entity->{$included}();
-
-        return $this->entityFactory->get($content);
+        return $this->contentFormatter->getFormattedEntityData($apiEntity, $filter, $include);
     }
 }

@@ -12,6 +12,13 @@ interface ApiEntity
     public function getResourceType();
 
     /**
+     * return the id
+     *
+     * @return int
+     */
+    public function getId();
+
+    /**
      * return all the attributes that has the entity
      *
      * @param array $fields
