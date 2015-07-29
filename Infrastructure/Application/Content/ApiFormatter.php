@@ -77,6 +77,10 @@ class ApiFormatter implements Formatter
     private function getFormattedRelationshipData(ApiEntity $entity, $include)
     {
         $content = $entity->{$include}();
+        if (empty($content)) {
+            return [];
+        }
+
         switch ($entity->getRelationshipsMapperType($include)) {
             case Entity::MAPPER_LINKS_TYPE_UNIQUE:
 

@@ -103,6 +103,11 @@ class Delivery
         }
 
         foreach ($entities as $entity) {
+
+            if (!is_a($entity, ApiEntity::class)) {
+                continue;
+            }
+
             $type = $entity->getResourceType();
             $result[] = $this->getFormattedEntityData(
                 $entity,
