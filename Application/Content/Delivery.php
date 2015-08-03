@@ -103,8 +103,7 @@ class Delivery
         }
 
         foreach ($entities as $entity) {
-
-            if (!is_a($entity, ApiEntity::class)) {
+            if (!is_a($entity, 'GoIntegro\Bundle\EndPointBundle\Application\Model\ApiEntity')) {
                 continue;
             }
 
