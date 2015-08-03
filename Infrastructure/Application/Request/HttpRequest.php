@@ -104,7 +104,7 @@ class HttpRequest implements ApiRequest
     {
         $response = [];
         foreach ($this->request->query as $param => $value) {
-            if(!in_array($param, array("include", "page", "size", "sort"))) {
+            if (!in_array($param, array("include", "page", "size", "sort", "access_token"))) {
                 foreach ($value as $key => $field) {
                     $response[$key] = !is_array($field) ? explode(',' , $field) : $field;
                 }
