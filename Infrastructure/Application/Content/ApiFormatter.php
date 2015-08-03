@@ -97,9 +97,10 @@ class ApiFormatter implements Formatter
             case Entity::MAPPER_LINKS_TYPE_POLYMORPHIC:
                 $return = [];
                 foreach ($content as $entity) {
+                    $type = $entity->getResourceSubType();
                     $return[] = [
                         'id' => $entity->getId(),
-                        'type' => $this->normalizeType($entity),
+                        'type' => $type ?: $this->normalizeType($entity),
                     ];
                 }
 
