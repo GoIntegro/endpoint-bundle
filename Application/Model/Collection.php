@@ -146,4 +146,24 @@ class Collection implements Iterator, ApiEntity
     {
         reset($this->entities);
     }
+
+    /**
+     * magic method to obtain the attributes from the record
+     *
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $result = [];
+        foreach ($this->entities as $entity) {
+            $data = call_user_func_array(array($entity, $name), $arguments);
+            foreach ($data as $ent) {
+                $result[] = $ent;
+            }
+        }
+
+        return $result;
+    }
 }
