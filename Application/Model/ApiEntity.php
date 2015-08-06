@@ -2,7 +2,9 @@
 
 namespace GoIntegro\Bundle\EndPointBundle\Application\Model;
 
-interface ApiEntity
+use Countable;
+
+interface ApiEntity extends Countable
 {
     /**
      * return the type of the resource
