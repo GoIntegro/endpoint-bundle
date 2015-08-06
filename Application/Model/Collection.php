@@ -11,6 +11,11 @@ class Collection implements Iterator, ApiEntity
      */
     private $entities = [];
 
+    /**
+     * @var int
+     */
+    private $count = 0;
+
     public function addEntity(ApiEntity $apiEntity)
     {
         if (in_array($apiEntity, $this->entities, true)) {
@@ -89,6 +94,22 @@ class Collection implements Iterator, ApiEntity
         }
 
         return $mapper;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return (int) $this->count;
+    }
+
+    /**
+     * @param $count
+     */
+    public function setCount($count)
+    {
+        $this->count = $count;
     }
 
     /**

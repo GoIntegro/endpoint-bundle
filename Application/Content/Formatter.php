@@ -17,9 +17,10 @@ interface Formatter
      *
      * @param Data $entity
      * @param Data[] $relatedEntities
+     * @param array $extra
      * @return array
      */
-    public function response(Data $entity, $relatedEntities);
+    public function response(Data $entity, array $relatedEntities, array $extra = []);
 
     /**
      * @param ApiEntity $entity

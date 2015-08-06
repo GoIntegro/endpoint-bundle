@@ -36,7 +36,8 @@ class Delivery
     {
         return $this->contentFormatter->response(
             $this->getEntityData($apiRequest, $apiEntity),
-            $this->getIncludedData($apiRequest, $apiEntity)
+            $this->getIncludedData($apiRequest, $apiEntity),
+            $this->getMeta($apiRequest, $apiEntity)
         );
     }
 
@@ -80,6 +81,17 @@ class Delivery
         }
 
         return $result;
+    }
+
+    private function getMeta(ApiRequest $apiRequest, ApiEntity $apiEntity)
+    {
+        return [
+            'pagination' => [
+                'count' => count($apiEntity),
+                'page' => $apiRequest->getPage() + 1,
+                'size' => $apiRequest->getSize(),
+            ],
+        ];
     }
 
     /**

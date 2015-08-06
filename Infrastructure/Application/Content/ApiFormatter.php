@@ -19,13 +19,15 @@ class ApiFormatter implements Formatter
      *
      * @param Data $entity
      * @param Data[] $relatedEntities
+     * @param array $extra
      * @return array
      */
-    public function response(Data $entity, $relatedEntities)
+    public function response(Data $entity, array $relatedEntities, array $extra = [])
     {
         return [
             $entity->getType() => $entity->toArray(),
             'linked' => $this->getFormattedIncludedData($relatedEntities),
+            'meta' => $extra,
         ];
     }
 
