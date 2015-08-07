@@ -19,7 +19,16 @@ class Data
 
     public function getType()
     {
-        return isset($this->record['type']) ? $this->record['type'] : $this->record[0]['type'];
+        $return = null;
+        if (isset($this->record['type'])) {
+            $return = $this->record['type'];
+        }
+
+        if (is_null($return) && isset($this->record[0]['type'])) {
+            $return = $this->record[0]['type'];
+        }
+
+        return $return;
     }
 
     public function toArray()
