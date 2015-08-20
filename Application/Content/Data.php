@@ -17,15 +17,38 @@ class Data
         $this->record = $record;
     }
 
+    public function getId()
+    {
+        return $this->getRecord('id');
+    }
+
     public function getType()
     {
+        return $this->getRecord('type');
+    }
+
+    public function getSubType()
+    {
+        return $this->getRecord('subtype');
+    }
+
+    public function isEqual(Data $data)
+    {
+        return $data->getId() === $this->getId() &&
+           $data->getType() === $this->getType() &&
+           $data->getSubType() === $this->getSubType()
+        ;
+    }
+
+    private function getRecord($field)
+    {
         $return = null;
-        if (isset($this->record['type'])) {
-            $return = $this->record['type'];
+        if (isset($this->record[$field])) {
+            $return = $this->record[$field];
         }
 
-        if (is_null($return) && isset($this->record[0]['type'])) {
-            $return = $this->record[0]['type'];
+        if (is_null($return) && isset($this->record[0][$field])) {
+            $return = $this->record[0][$field];
         }
 
         return $return;

@@ -132,26 +132,45 @@ class Delivery
                 continue;
             }
 
-
             if (!empty($toIncludes)) {
                 foreach ($toIncludes as $toInclude) {
                     $includes = [];
                     $includes = $this->getFormattedIncludedData($apiRequest, $entity, $toInclude, $includes, $withRelationships);
                     if (!empty($includes)) {
                         foreach ($includes as $include) {
-                            $result[] = $include;
+                            $exist = false;
+                            foreach ($result as $response) {
+                                if ($response->isEqual($include)) {
+                                    $exist = true;
+                                }
+                            }
+
+                            if (!$exist) {
+                                $result[] = $include;
+                            }
                         }
                     }
                 }
             }
 
-
             $type = $entity->getResourceType();
-            $result[] = $this->getFormattedEntityData(
+            $object = null;
+            $object = $this->getFormattedEntityData(
                 $entity,
                 $apiRequest->getFilter($type),
                 $withRelationships
             );
+
+            $exist = false;
+            foreach ($result as $return) {
+                if ($return->isEqual($object)) {
+                    $exist = true;
+                }
+            }
+
+            if (!$exist) {
+                $result[] = $object;
+            }
         }
 
         return $result;
