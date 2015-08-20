@@ -18,32 +18,37 @@ class ApiFormatter implements Formatter
      * return the formatted response from and entity and relationships
      *
      * @param Data $entity
-     * @param Data[] $relatedEntities
+     * @param array|\GoIntegro\Bundle\EndPointBundle\Application\Content\Data[] $includedEntities
      * @param array $extra
      * @return array
      */
-    public function response(Data $entity, array $relatedEntities, array $extra = [])
+    public function response(Data $entity, array $includedEntities, array $extra = [])
     {
-        return [
-            $entity->getType() => $entity->toArray(),
-            'linked' => $this->getFormattedIncludedData($relatedEntities),
-            'meta' => $extra,
-        ];
+        $response[$entity->getType()] = $entity->toArray();
+        if (!empty($includedEntities)) {
+            $response['linked'] = $this->getFormattedIncludedData($includedEntities);
+        }
+
+        if (!empty($extra)) {
+            $response['meta'] = $extra;
+        }
+
+        return $response;
     }
 
     /**
      * @param ApiEntity $entity
      * @param $fields
-     * @param $includes
+     * @param bool $withRelationships
      * @return Data
      */
-    public function getFormattedEntityData(ApiEntity $entity, $fields, $includes)
+    public function getFormattedEntityData(ApiEntity $entity, $fields, $withRelationships = true)
     {
         $response = $entity->getData($fields);
-        if (!empty($includes)) {
+        if ($withRelationships && $entity->hasRelationships()) {
             $response['links'] = [];
-            foreach ($includes as $include) {
-                $response['links'][$include] = $this->getFormattedRelationshipData($entity, $include);
+            foreach ($entity->getRelationships() as $relationships) {
+                $response['links'][$relationships] = $this->getFormattedRelationshipData($entity, $relationships);
             }
         }
 
@@ -76,7 +81,7 @@ class ApiFormatter implements Formatter
      * @param $include
      * @return array|int|string
      */
-    private function getFormattedRelationshipData(ApiEntity $entity, $include)
+    public function getFormattedRelationshipData(ApiEntity $entity, $include)
     {
         $content = $entity->{$include}();
         if (empty($content)) {

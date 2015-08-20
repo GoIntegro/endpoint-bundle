@@ -46,14 +46,18 @@ class Delivery
      *
      * @param ApiRequest $apiRequest
      * @param ApiEntity $apiEntity
+     * @param bool $withRelationships
      * @return Data
      */
-    private function getEntityData(ApiRequest $apiRequest, ApiEntity $apiEntity)
-    {
+    private function getEntityData(
+        ApiRequest $apiRequest,
+        ApiEntity $apiEntity,
+        $withRelationships = true
+    ) {
         return $this->getFormattedEntityData(
             $apiEntity,
             $apiRequest->getFilter($apiEntity->getResourceType()),
-            $apiRequest->getIncludes()
+            $withRelationships
         );
     }
 
@@ -62,10 +66,14 @@ class Delivery
      *
      * @param ApiRequest $apiRequest
      * @param ApiEntity $apiEntity
+     * @param bool $withRelationships
      * @return array
      */
-    private function getIncludedData(ApiRequest $apiRequest, ApiEntity $apiEntity)
-    {
+    private function getIncludedData(
+        ApiRequest $apiRequest,
+        ApiEntity $apiEntity,
+        $withRelationships = true
+    ) {
         if (!$apiRequest->hasIncludes()) {
             return [];
         }
@@ -76,7 +84,8 @@ class Delivery
                 $apiRequest,
                 $apiEntity,
                 $entityToInclude,
-                $result
+                $result,
+                $withRelationships
             );
         }
 
@@ -100,30 +109,48 @@ class Delivery
      * @param ApiRequest $apiRequest
      * @param ApiEntity $apiEntity
      * @param $entityToInclude
-     * @param $result
+     * @param array $result
+     * @param $withRelationships
      * @return array
      */
     private function getFormattedIncludedData(
         ApiRequest $apiRequest,
         ApiEntity $apiEntity,
         $entityToInclude,
-        array $result
+        array $result,
+        $withRelationships
     ) {
         $entities = $apiEntity->{$entityToInclude}();
         if (!is_array($entities)) {
             $entities = [$entities];
         }
 
+        $toIncludes = $apiRequest->getIncludes($entityToInclude);
+
         foreach ($entities as $entity) {
             if (!is_a($entity, 'GoIntegro\Bundle\EndPointBundle\Application\Model\ApiEntity')) {
                 continue;
             }
 
+
+            if (!empty($toIncludes)) {
+                foreach ($toIncludes as $toInclude) {
+                    $includes = [];
+                    $includes = $this->getFormattedIncludedData($apiRequest, $entity, $toInclude, $includes, $withRelationships);
+                    if (!empty($includes)) {
+                        foreach ($includes as $include) {
+                            $result[] = $include;
+                        }
+                    }
+                }
+            }
+
+
             $type = $entity->getResourceType();
             $result[] = $this->getFormattedEntityData(
                 $entity,
                 $apiRequest->getFilter($type),
-                $apiRequest->getIncludes($entityToInclude)
+                $withRelationships
             );
         }
 
@@ -135,11 +162,11 @@ class Delivery
      *
      * @param ApiEntity $apiEntity
      * @param $filter
-     * @param $include
+     * @param $withRelationships
      * @return Data
      */
-    private function getFormattedEntityData(ApiEntity $apiEntity, $filter, $include)
+    private function getFormattedEntityData(ApiEntity $apiEntity, $filter, $withRelationships)
     {
-        return $this->contentFormatter->getFormattedEntityData($apiEntity, $filter, $include);
+        return $this->contentFormatter->getFormattedEntityData($apiEntity, $filter, $withRelationships);
     }
 }

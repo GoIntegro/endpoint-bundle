@@ -35,4 +35,8 @@ interface ApiEntity extends Countable
      * @return int|null
      */
     public function getRelationshipsMapperType($entity);
+
+    public function getRelationships();
+
+    public function hasRelationships();
 }
