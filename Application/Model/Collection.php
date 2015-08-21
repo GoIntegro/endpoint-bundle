@@ -187,4 +187,14 @@ class Collection implements Iterator, ApiEntity
 
         return $result;
     }
+
+    public function getRelationships()
+    {
+        return [];
+    }
+
+    public function hasRelationships()
+    {
+        return false;
+    }
 }
