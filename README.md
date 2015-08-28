@@ -67,3 +67,13 @@ Por lo que la aplicación que implemente este *endopoint-bundle* debé tener sus
 En caso de querer cambiar el formato de respuesta, en ```Infrastructura\Application\Content``` hay que generar un nuevo formatter e inyectar este en ```Application\Content\Delivery```
 
 Los dos métodos que hay que implementar de ```Application\Content\Formatter``` son para formato general y para cada entidad ```response``` y ```getFormattedEntityData``` respectivamente
+
+
+### Requerimientos para este bundle (Algunos pueden no estar desarrollados)
+  - Include de 3 niveles: Recurso principal, Links, Link.Links
+  - Field & Relationships Map: El propio recurso define que expone
+  - Computed properties: Permite exponer propiedades que no existen en la entidad original sino que son generadas en base a otros datos
+  - Whitelist: El usuario puede customizar el resultado del recurso pero dentro de los limites impuestos por el mismo. Solo se deberian poder filtrar por las propiedades que expone el recurso
+  - Security: Se debe poder chequear de alguna forma que el usuario pedido tenga acceso al recurso
+  - Metadata: Paginacion e I18N
+  - RAML configuration: Configurar el recurso desde un RAML
