@@ -44,11 +44,18 @@ class ApiFormatter implements Formatter
      */
     public function getFormattedEntityData(ApiEntity $entity, $fields, $withRelationships = true)
     {
-        $response = $entity->getData($fields);
-        if ($withRelationships && $entity->hasRelationships()) {
-            $response['links'] = [];
-            foreach ($entity->getRelationships() as $relationships) {
-                $response['links'][$relationships] = $this->getFormattedRelationshipData($entity, $relationships);
+        if ( ! is_a($entity, 'GoIntegro\Bundle\EndPointBundle\Application\Model\Collection')) {
+            $response = $entity->getData($fields);
+            if ($withRelationships && $entity->hasRelationships()) {
+                $response['links'] = [];
+                foreach ($entity->getRelationships() as $relationships) {
+                    $response['links'][$relationships] = $this->getFormattedRelationshipData($entity, $relationships);
+                }
+            }
+        } else {
+            $response = [];
+            foreach ($entity as $ent) {
+                $response[] = $this->getFormattedEntityData($ent, $fields, $withRelationships)->toArray();
             }
         }
 
