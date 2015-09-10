@@ -180,8 +180,10 @@ class Collection implements Iterator, ApiEntity
         $result = [];
         foreach ($this->entities as $entity) {
             $data = call_user_func_array(array($entity, $name), $arguments);
-            foreach ($data as $ent) {
-                $result[] = $ent;
+            if ($data) {
+                foreach ($data as $ent) {
+                    $result[] = $ent;
+                }
             }
         }
 

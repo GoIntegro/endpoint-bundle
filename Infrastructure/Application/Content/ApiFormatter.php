@@ -91,16 +91,20 @@ class ApiFormatter implements Formatter
     public function getFormattedRelationshipData(ApiEntity $entity, $include)
     {
         $content = $entity->{$include}();
-        if (empty($content)) {
-            return [];
-        }
 
         switch ($entity->getRelationshipsMapperType($include)) {
             case Entity::MAPPER_LINKS_TYPE_UNIQUE:
+                if (empty($content)) {
+                    return null;
+                }
 
                 return $content->getId();
                 break;
             case Entity::MAPPER_LINKS_TYPE_ARRAY:
+                if (empty($content)) {
+                    return [];
+                }
+
                 $ids = [];
                 foreach ($content as $entity) {
                     $ids[] = $entity->getId();
@@ -109,6 +113,10 @@ class ApiFormatter implements Formatter
                 return $ids;
                 break;
             case Entity::MAPPER_LINKS_TYPE_POLYMORPHIC:
+                if (empty($content)) {
+                    return [];
+                }
+
                 $return = [];
                 foreach ($content as $entity) {
                     $type = $entity->getResourceSubType();
