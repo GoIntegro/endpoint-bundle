@@ -95,7 +95,7 @@ class Delivery
     private function getMeta(ApiRequest $apiRequest, ApiEntity $apiEntity)
     {
         $count = count($apiEntity);
-        $size = $apiRequest->getSize();
+        $size = $apiEntity->getSize(); // $apiRequest->getSize()
 
         return [
             'pagination' => [

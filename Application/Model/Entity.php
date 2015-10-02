@@ -12,4 +12,9 @@ abstract class Entity
     {
         return 1;
     }
+
+    public function getSize()
+    {
+        return 1;
+    }
 }

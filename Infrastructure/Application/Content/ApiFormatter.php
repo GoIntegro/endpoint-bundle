@@ -29,7 +29,7 @@ class ApiFormatter implements Formatter
             $response['linked'] = $this->getFormattedIncludedData($includedEntities);
         }
 
-        if (!empty($extra)) {
+        if (!empty($extra) && isset($response[$entity->getType()][0])) {
             $response['meta'] = $extra;
         }
 

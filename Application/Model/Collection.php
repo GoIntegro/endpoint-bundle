@@ -199,4 +199,9 @@ class Collection implements Iterator, ApiEntity
     {
         return false;
     }
+
+    public function getSize()
+    {
+        return count($this->entities);
+    }
 }
